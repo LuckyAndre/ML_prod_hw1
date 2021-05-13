@@ -15,7 +15,7 @@ SklearnClassificationModel = Union[RandomForestClassifier, LogisticRegression]  
 def train_model(features: pd.DataFrame, target: pd.Series, train_params: TrainingParams) -> SklearnClassificationModel:
     if train_params.model_type == "RandomForestClassifier":
         model = RandomForestClassifier(n_estimators=100, random_state=train_params.random_state)
-    elif train_params.model_type == "LinearRegression":
+    elif train_params.model_type == "LogisticRegression":
         model = LogisticRegression()
     else:
         raise NotImplementedError()

@@ -2,7 +2,6 @@ import logging
 import sys
 
 import click
-import pandas as pd
 
 from ml_project.data import (
     read_data,
@@ -10,7 +9,7 @@ from ml_project.data import (
 )
 from ml_project.enities import (
     TrainingPipelineParams,
-    read_training_pipeline_params,
+    read_training_pipeline_params
 )
 from ml_project.features import (
     extract_target,
@@ -22,7 +21,7 @@ from ml_project.models import (
     train_model,
     serialize_model,
     predict_model,
-    evaluate_model,
+    evaluate_model
 )
 
 
@@ -49,12 +48,11 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     logger.info(f"train_features.shape is {train_features.shape}")
     val_features = make_features(transformer, val_df)
     val_target = extract_target(val_df, training_pipeline_params.feature_params)
-    val_features_prepared = prepare_val_features_for_predict(train_features, val_features)
-    logger.info(f"val_features.shape is {val_features_prepared.shape}")
+    logger.info(f"val_features.shape is {val_features.shape}")
 
     # train and score
     model = train_model(train_features, train_target, training_pipeline_params.train_params)
-    predicts = predict_model(model, val_features_prepared)
+    predicts = predict_model(model, val_features)
     metrics = evaluate_model(predicts, val_target)
     logger.info(f"metrics is {metrics}")
 
@@ -68,13 +66,6 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     logger.info(f"transformer, model and metrics were saved")
 
     return path_to_feature_transformer, path_to_model, path_to_metrics, metrics
-
-
-def prepare_val_features_for_predict(train_features: pd.DataFrame, val_features: pd.DataFrame):
-    # small hack to work with categories
-    train_features, val_features = train_features.align(val_features, join="left", axis=1)
-    val_features = val_features.fillna(0)
-    return val_features
 
 
 @click.command(name="train_pipeline")

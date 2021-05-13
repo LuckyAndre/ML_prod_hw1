@@ -13,6 +13,7 @@ setup(
         "click == 7.0",
         "scikit-learn==0.24.2 ",
         "dataclasses==0.6",
-        "marshmallow==3.12.1"
+        "marshmallow==3.12.1",
+        "marshmallow-dataclass==8.4.1"
     ]
 )
