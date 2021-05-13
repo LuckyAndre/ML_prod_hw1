@@ -1,26 +1,15 @@
-input_data_path: "data/raw/train.csv"
+input_data_path: "data/raw/heart.csv"
+report_data_path: "reports/EDA_report.html"
 output_model_path: "models/model.pkl"
-metric_path: "models/metrics.json"
+output_features_transformer_path: "features_transformer/features_transformer.pkl"
+output_metric_path: "models/metrics.json"
 splitting_params:
-  val_size: 0.1
-  random_state: 3
+  val_size: 0.2
+  random_state: 7
 train_params:
-  model_type: "RandomForestRegressor"
+  model_type: "RandomForestClassifier"
 feature_params:
   categorical_features:
-    - "MSZoning"
-    - "Neighborhood"
-    - "RoofStyle"
-    - "MasVnrType"
-    - "BsmtQual"
-    - "BsmtExposure"
-    - "HeatingQC"
-    - "CentralAir"
-    - "KitchenQual"
-    - "FireplaceQu"
-    - "GarageType"
-    - "GarageFinish"
-    - "PavedDrive"
   numerical_features:
     - "OverallQual"
     - "MSSubClass"
@@ -33,7 +22,19 @@ feature_params:
     - "YrSold"
     - "YearRemodAdd"
     - "LotFrontage"
+    - "age"
+    - "sex"
+    - "cp"
+    - "trestbps"
+    - "chol"
+    - "fbs"
+    - "restecg"
+    - "thalach"
+    - "exang"
+    - "oldpeak"
+    - "slope"
+    - "ca"
+    - "thal"
   features_to_drop:
-    - "YrSold"
-  target_col: "SalePrice"
+  target_col: "target"
 

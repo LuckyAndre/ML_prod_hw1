@@ -20,12 +20,9 @@ env*/
 .ipynb_checkpoints
 
 
-# Logs
-src/logs
-
-
 # My temp folders, files
 temp/
+ml_project.egg-info/
 
 
 

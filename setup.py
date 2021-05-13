@@ -10,6 +10,9 @@ setup(
         "notebook == 6.3.0",
         "pandas == 1.2.4",
         "pandas-profiling == 3.0.0",
-        "click == 7.0"
+        "click == 7.0",
+        "scikit-learn==0.24.2 ",
+        "dataclasses==0.6",
+        "marshmallow==3.12.1"
     ]
 )

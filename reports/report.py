@@ -1,31 +1,39 @@
-import os
-import inspect
-import logging.config
+import sys
+import logging
 import webbrowser
+import click
 
-import yaml
 import pandas as pd
 from pandas_profiling import ProfileReport
 
-# logging
-current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-main_dir = os.path.dirname(current_dir)
-logger = logging.getLogger("PIPELINE")
-with open(os.path.join(main_dir, "configs", "logging_config.yaml")) as config_fin:
-    logging.config.dictConfig(yaml.load(config_fin.read(), Loader=yaml.FullLoader))
+from ml_project.enities.train_pipeline_params import (
+    TrainingPipelineParams,
+    read_training_pipeline_params,
+)
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
-def main():
+def make_report(params: TrainingPipelineParams):
     logger.info("EDA report preparation started")
-    source_df = pd.read_csv(os.path.join(main_dir, "data", "raw", "heart.csv"))
+    source_df = pd.read_csv(params.input_data_path)
 
     # report
     profile = ProfileReport(source_df)
-    report_path = os.path.join(main_dir, "reports", "EDA_report.html")
-    profile.to_file(output_file=report_path)
-    webbrowser.open(f"file:///{report_path}", new=2)
+    profile.to_file(output_file=params.report_data_path)
+    webbrowser.open(f"file:///{params.report_data_path}", new=2)
     logger.info("EDA report preparation completed")
 
 
+@click.command(name="make_report")
+@click.argument("config_path")
+def make_report_command(config_path: str):
+    params = read_training_pipeline_params(config_path)
+    make_report(params)
+
+
 if __name__ == "__main__":
-    main()
+    make_report_command()

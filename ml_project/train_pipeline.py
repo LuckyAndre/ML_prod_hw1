@@ -1,34 +1,35 @@
-import os
-import inspect
-import json
 import logging
 import sys
 
 import click
-import yaml
 import pandas as pd
 
-# from ml_example.data import read_data, split_train_val_data
-# from ml_example.enities.train_pipeline_params import (
-#     TrainingPipelineParams,
-#     read_training_pipeline_params,
-# )
-# from ml_example.features import make_features
-# from ml_example.features.build_features import extract_target, build_transformer
-# from ml_example.models import (
-#     train_model,
-#     serialize_model,
-#     predict_model,
-#     evaluate_model,
-# )
+from ml_project.data import (
+    read_data,
+    split_train_val_data
+)
+from ml_project.enities import (
+    TrainingPipelineParams,
+    read_training_pipeline_params,
+)
+from ml_project.features import (
+    extract_target,
+    build_transformer,
+    make_features,
+    serialize_features_transformer
+)
+from ml_project.models import (
+    train_model,
+    serialize_model,
+    predict_model,
+    evaluate_model,
+)
 
 
-# logging
-current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-main_dir = os.path.dirname(current_dir)
-logger = logging.getLogger("PIPELINE")
-with open(os.path.join(main_dir, "configs", "logging_config.yaml")) as config_fin:
-    logging.config.dictConfig(yaml.load(config_fin.read(), Loader=yaml.FullLoader))
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
 def train_pipeline(training_pipeline_params: TrainingPipelineParams):
@@ -48,29 +49,24 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     logger.info(f"train_features.shape is {train_features.shape}")
     val_features = make_features(transformer, val_df)
     val_target = extract_target(val_df, training_pipeline_params.feature_params)
-    val_features_prepared = prepare_val_features_for_predict(train_features, val_features) #align features in val with train
+    val_features_prepared = prepare_val_features_for_predict(train_features, val_features)
     logger.info(f"val_features.shape is {val_features_prepared.shape}")
 
     # train and score
     model = train_model(train_features, train_target, training_pipeline_params.train_params)
-    predicts = predict_model(
-        model,
-        val_features_prepared,
-        training_pipeline_params.feature_params.use_log_trick, # TODO: Что это такое и для чего?
-    )
-    metrics = evaluate_model(
-        predicts,
-        val_target,
-        use_log_trick=training_pipeline_params.feature_params.use_log_trick, # TODO: Что это такое и для чего?
-    )
-
-    with open(training_pipeline_params.metric_path, "w") as metric_file:
-        json.dump(metrics, metric_file)
+    predicts = predict_model(model, val_features_prepared)
+    metrics = evaluate_model(predicts, val_target)
     logger.info(f"metrics is {metrics}")
 
+    # save
+    path_to_feature_transformer = serialize_features_transformer(
+        transformer,
+        training_pipeline_params.output_features_transformer_path
+    )
     path_to_model = serialize_model(model, training_pipeline_params.output_model_path)
+    path_to_metrics = serialize_model(metrics, training_pipeline_params.output_metric_path)
 
-    return path_to_model, metrics
+    return path_to_feature_transformer, path_to_model, path_to_metrics, metrics
 
 
 def prepare_val_features_for_predict(train_features: pd.DataFrame, val_features: pd.DataFrame):
