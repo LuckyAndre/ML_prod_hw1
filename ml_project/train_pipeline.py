@@ -65,6 +65,7 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     )
     path_to_model = serialize_model(model, training_pipeline_params.output_model_path)
     path_to_metrics = serialize_model(metrics, training_pipeline_params.output_metric_path)
+    logger.info(f"transformer, model and metrics were saved")
 
     return path_to_feature_transformer, path_to_model, path_to_metrics, metrics
 

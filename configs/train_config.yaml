@@ -11,17 +11,6 @@ train_params:
 feature_params:
   categorical_features:
   numerical_features:
-    - "OverallQual"
-    - "MSSubClass"
-    - "OverallCond"
-    - "GrLivArea"
-    - "GarageCars"
-    - "1stFlrSF"
-    - "Fireplaces"
-    - "BsmtFullBath"
-    - "YrSold"
-    - "YearRemodAdd"
-    - "LotFrontage"
     - "age"
     - "sex"
     - "cp"
