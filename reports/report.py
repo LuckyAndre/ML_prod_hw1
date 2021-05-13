@@ -1,14 +1,13 @@
 import sys
 import logging
-import webbrowser
 import click
 
 import pandas as pd
 from pandas_profiling import ProfileReport
 
-from ml_project.enities.train_pipeline_params import (
+from ml_project.enities import (
     TrainingPipelineParams,
-    read_training_pipeline_params,
+    read_training_pipeline_params
 )
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,6 @@ def make_report(params: TrainingPipelineParams):
     # report
     profile = ProfileReport(source_df)
     profile.to_file(output_file=params.report_data_path)
-    webbrowser.open(f"file:///{params.report_data_path}", new=2)
     logger.info("EDA report preparation completed")
 
 

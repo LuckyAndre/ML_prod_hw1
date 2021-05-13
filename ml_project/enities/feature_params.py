@@ -4,7 +4,7 @@ from typing import List, Optional
 
 @dataclass()
 class FeatureParams:
-    categorical_features: List[str]
+    categorical_features: Optional[str]
     numerical_features: List[str]
-    features_to_drop: List[str]
-    target_col: Optional[str]
+    features_to_drop: Optional[str]
+    target_col: str
