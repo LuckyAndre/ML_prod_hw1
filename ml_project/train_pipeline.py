@@ -13,7 +13,7 @@ from ml_project.enities import (
 )
 from ml_project.features import (
     extract_target,
-    build_transformer,
+    Features_transformer,
     make_features,
     serialize_features_transformer
 )
@@ -41,13 +41,19 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     logger.info(f"val_df.shape is {val_df.shape}")
 
     # features extraction
-    transformer = build_transformer(training_pipeline_params.feature_params)
-    transformer.fit(train_df)
-    train_features = make_features(transformer, train_df)
     train_target = extract_target(train_df, training_pipeline_params.feature_params)
+    transformer = Features_transformer(training_pipeline_params.feature_params)
+    transformer.fit(train_df.drop(columns=training_pipeline_params.feature_params.target_col))
+    train_features = make_features(
+        transformer,
+        train_df.drop(columns=training_pipeline_params.feature_params.target_col)
+    )
     logger.info(f"train_features.shape is {train_features.shape}")
-    val_features = make_features(transformer, val_df)
     val_target = extract_target(val_df, training_pipeline_params.feature_params)
+    val_features = make_features(
+        transformer,
+        val_df.drop(columns=training_pipeline_params.feature_params.target_col)
+    )
     logger.info(f"val_features.shape is {val_features.shape}")
 
     # train and score

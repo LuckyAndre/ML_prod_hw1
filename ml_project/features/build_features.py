@@ -110,14 +110,22 @@ class Features_transformer(object):
 
         return df
 
+    def fit(self, df: pd.DataFrame):
+        df = self.check_input_df(df)
+        self.transformer.fit(df)
+
+    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = self.check_input_df(df)
+        return pd.DataFrame(self.transformer.transform(df))
+
     def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         df = self.check_input_df(df)
         self.transformer.fit(df)
         return pd.DataFrame(self.transformer.transform(df))
 
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = self.check_input_df(df)
-        return pd.DataFrame(self.transformer.transform(df))
+
+def make_features(transformer: Features_transformer, df: pd.DataFrame) -> pd.DataFrame:
+    return pd.DataFrame(transformer.transform(df))
 
 
 def extract_target(df: pd.DataFrame, params: FeatureParams) -> pd.Series:
