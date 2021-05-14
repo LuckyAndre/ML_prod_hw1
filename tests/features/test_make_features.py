@@ -1,47 +1,119 @@
-from typing import List
+from typing import List, Optional
 
-import numpy as np
 import pandas as pd
 import pytest
 from numpy.testing import assert_allclose
 
-from ml_example.data.make_dataset import read_data
-from ml_example.enities.feature_params import FeatureParams
-from ml_example.features.build_features import make_features, extract_target, build_transformer
+from ml_project.enities.feature_params import FeatureParams
+from ml_project.features.build_features import make_features, extract_target, Features_transformer
+from tests.synthetic_data_generator import (
+    synthetic_numeric_data_generator,
+    synthetic_categorical_data_generator,
+    synthetic_numeric_and_categorical_data_generator
+)
 
 
 @pytest.fixture
-def feature_params(
-    categorical_features: List[str],
-    features_to_drop: List[str],
-    numerical_features: List[str],
+def feature_params_numeric(
+    categorical_features_no: Optional[str],
+    numerical_features_yes: List[str],
+    features_to_drop_no: Optional[str],
     target_col: str,
 ) -> FeatureParams:
+
     params = FeatureParams(
-        categorical_features=categorical_features,
-        numerical_features=numerical_features,
-        features_to_drop=features_to_drop,
+        categorical_features=categorical_features_no,
+        numerical_features=numerical_features_yes,
+        features_to_drop=features_to_drop_no,
         target_col=target_col,
-        use_log_trick=True,
     )
+
     return params
 
 
-def test_make_features(
-    feature_params: FeatureParams, dataset_path: str,
-):
-    data = read_data(dataset_path)
-    transformer = build_transformer(feature_params)
-    transformer.fit(data)
-    features = make_features(transformer, data)
-    assert not pd.isnull(features).any().any()
-    assert all(x not in features.columns for x in feature_params.features_to_drop)
+@pytest.fixture
+def feature_params_categorical(
+    categorical_features_yes: List[str],
+    numerical_features_no: Optional[str],
+    features_to_drop_no: Optional[str],
+    target_col: str,
+) -> FeatureParams:
 
-
-def test_extract_features(feature_params: FeatureParams, dataset_path: str):
-    data = read_data(dataset_path)
-
-    target = extract_target(data, feature_params)
-    assert_allclose(
-        np.log(data[feature_params.target_col].to_numpy()), target.to_numpy()
+    params = FeatureParams(
+        categorical_features=categorical_features_yes,
+        numerical_features=numerical_features_no,
+        features_to_drop=features_to_drop_no,
+        target_col=target_col,
     )
+
+    return params
+
+
+@pytest.fixture
+def feature_params_numerical_categorical(
+    categorical_features_yes: List[str],
+    numerical_features_yes: List[str],
+    features_to_drop_no: Optional[str],
+    target_col: str,
+) -> FeatureParams:
+
+    params = FeatureParams(
+        categorical_features=categorical_features_yes,
+        numerical_features=numerical_features_yes,
+        features_to_drop=features_to_drop_no,
+        target_col=target_col,
+    )
+
+    return params
+
+
+def test_make_features_numerical(random_state: int, dataset_size: int, feature_params_numeric: FeatureParams):
+    # data generation
+    data = synthetic_numeric_data_generator(random_state, dataset_size)
+
+    # features processing
+    transformer = Features_transformer(feature_params_numeric)
+    transformer.fit(data.drop(columns=[feature_params_numeric.target_col]))
+    features = make_features(transformer, data.drop(columns=[feature_params_numeric.target_col]))
+    assert not pd.isnull(features).any().any()
+    assert data.shape[0] == features.shape[0]
+    assert data.shape[1] - 1 == features.shape[1] # reduced on target
+
+
+def test_make_features_categorical(random_state: int, dataset_size: int, feature_params_categorical: FeatureParams):
+    # data generation
+    data = synthetic_categorical_data_generator(random_state, dataset_size)
+
+    # features processing
+    transformer = Features_transformer(feature_params_categorical)
+    transformer.fit(data.drop(columns=[feature_params_categorical.target_col]))
+    features = make_features(transformer, data.drop(columns=[feature_params_categorical.target_col]))
+    assert not pd.isnull(features).any().any()
+    assert data.shape[0] == features.shape[0]
+    assert data.shape[1] - 1 == features.shape[1] # reduced on target
+
+
+def test_make_features_numerical_categorical(
+        random_state: int,
+        dataset_size: int,
+        feature_params_numerical_categorical: FeatureParams
+):
+
+    # data generation
+    data = synthetic_numeric_and_categorical_data_generator(random_state, dataset_size)
+
+    # features processing
+    transformer = Features_transformer(feature_params_numerical_categorical)
+    transformer.fit(data.drop(columns=[feature_params_numerical_categorical.target_col]))
+    features = make_features(transformer, data.drop(columns=[feature_params_numerical_categorical.target_col]))
+    assert not pd.isnull(features).any().any()
+    assert data.shape[0] == features.shape[0]
+    assert data.shape[1] - 1 == features.shape[1] # reduced on target
+
+
+def test_extract_features(random_state: int, dataset_size: int, feature_params_numeric: FeatureParams):
+    # data generation
+    data = synthetic_numeric_data_generator(random_state, dataset_size)
+
+    target = extract_target(data, feature_params_numeric)
+    assert_allclose(data['target'].to_numpy(), target.to_numpy())

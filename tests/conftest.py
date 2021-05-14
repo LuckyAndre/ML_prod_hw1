@@ -1,7 +1,17 @@
 import os
 
 import pytest
-from typing import List
+from typing import List, Optional
+
+
+@pytest.fixture()
+def random_state():
+    return 7
+
+
+@pytest.fixture()
+def dataset_size():
+    return 300
 
 
 @pytest.fixture()
@@ -12,45 +22,43 @@ def dataset_path():
 
 @pytest.fixture()
 def target_col():
-    return "SalePrice"
+    return "target"
 
 
 @pytest.fixture()
-def categorical_features() -> List[str]:
-    return [
-        "MSZoning",
-        "Neighborhood",
-        "RoofStyle",
-        "MasVnrType",
-        "BsmtQual",
-        "BsmtExposure",
-        "HeatingQC",
-        "CentralAir",
-        "KitchenQual",
-        "FireplaceQu",
-        "GarageType",
-        "GarageFinish",
-        "PavedDrive",
-    ]
+def categorical_features_yes() -> List[str]:
+    return ["categorical"]
+
+
+@pytest.fixture()
+def categorical_features_no() -> Optional[str]:
+    return None
 
 
 @pytest.fixture
-def numerical_features() -> List[str]:
+def numerical_features_yes() -> List[str]:
     return [
-        "OverallQual",
-        "MSSubClass",
-        "OverallCond",
-        "GrLivArea",
-        "GarageCars",
-        "1stFlrSF",
-        "Fireplaces",
-        "BsmtFullBath",
-        "YrSold",
-        "YearRemodAdd",
-        "LotFrontage",
+        "age",
+        "sex",
+        "cp",
+        "trestbps",
+        "chol",
+        "fbs",
+        "restecg",
+        "thalach",
+        "exang",
+        "oldpeak",
+        "slope",
+        "ca",
+        "thal"
     ]
 
 
 @pytest.fixture()
-def features_to_drop() -> List[str]:
-    return ["YrSold"]
+def numerical_features_no() -> Optional[str]:
+    return None
+
+
+@pytest.fixture()
+def features_to_drop_no() -> Optional[str]:
+    return None

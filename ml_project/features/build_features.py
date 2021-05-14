@@ -19,7 +19,7 @@ class Features_transformer(object):
                 [
                     (
                         "categorical_pipeline",
-                        self.build_categorical_pipeline(handle_unknown='use_encoded_value', unknown_value=np.nan),
+                        self.build_categorical_pipeline(),
                         params.categorical_features,
                     ),
                     (
@@ -62,8 +62,8 @@ class Features_transformer(object):
     def build_categorical_pipeline() -> Pipeline:
         categorical_pipeline = Pipeline(
             [
-                ("impute", SimpleImputer(missing_values=np.nan, strategy="most_frequent")),
-                ("ordinal", OrdinalEncoder()),
+                ("ordinal", OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=np.nan)),
+                ("impute", SimpleImputer(missing_values=np.nan, strategy="most_frequent"))
             ]
         )
         return categorical_pipeline
