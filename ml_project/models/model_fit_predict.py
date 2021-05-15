@@ -1,4 +1,5 @@
 import pickle
+import json
 from typing import Dict, Union
 
 import numpy as np
@@ -44,6 +45,6 @@ def serialize_model(model: SklearnClassificationModel, output: str) -> str:
 
 
 def serialize_metrics(metrics: Dict[str, float], output: str) -> str:
-    with open(output, "wb") as f:
-        pickle.dump(metrics, f)
+    with open(output, "w") as f:
+        json.dump(metrics, f)
     return output

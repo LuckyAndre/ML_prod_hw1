@@ -20,6 +20,7 @@ from ml_project.features import (
 from ml_project.models import (
     train_model,
     serialize_model,
+    serialize_metrics,
     predict_model,
     evaluate_model
 )
@@ -68,7 +69,7 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
         training_pipeline_params.output_features_transformer_path
     )
     path_to_model = serialize_model(model, training_pipeline_params.output_model_path)
-    path_to_metrics = serialize_model(metrics, training_pipeline_params.output_metric_path)
+    path_to_metrics = serialize_metrics(metrics, training_pipeline_params.output_metric_path)
     logger.info(f"transformer, model and metrics were saved")
 
     return path_to_feature_transformer, path_to_model, path_to_metrics, metrics
