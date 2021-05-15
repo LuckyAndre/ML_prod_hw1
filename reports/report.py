@@ -22,7 +22,7 @@ def make_report(params: Params):
 
     # report
     profile = ProfileReport(source_df)
-    profile.to_file(output_file=params.report_data)
+    profile.to_file(output_file=params.report_path)
     logger.info("EDA report preparation completed")
 
 

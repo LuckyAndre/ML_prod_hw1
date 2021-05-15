@@ -10,7 +10,7 @@ from .inference_params import InferenceParams
 
 @dataclass()
 class Params:
-    report_data: str
+    report_path: str
     train_data_path: str
     model_path: str
     features_transformer_path: str

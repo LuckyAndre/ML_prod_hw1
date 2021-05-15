@@ -9,6 +9,7 @@ from ml_project.enities import (
     SplittingParams,
     FeatureParams,
     TrainingParams,
+    InferenceParams,
 )
 
 
@@ -26,19 +27,19 @@ def test_train_e2e(
     expected_features_transformer_path = tmpdir.join("features_transformer.pkl")
 
     params = Params(
-        input_data_path=dataset_path,
-        report_data_path="",
-        output_model_path=expected_output_model_path,
-        output_features_transformer_path=expected_features_transformer_path,
-        output_metric_path=expected_metric_path,
+        report_path="",
+        train_data_path=dataset_path,
+        model_path=expected_output_model_path,
+        features_transformer_path=expected_features_transformer_path,
+        metric_path=expected_metric_path,
         splitting_params=SplittingParams(val_size=0.2, random_state=239),
+        train_params=TrainingParams(model_type="RandomForestClassifier"),
         feature_params=FeatureParams(
             numerical_features=numerical_features_yes,
             categorical_features=categorical_features_no,
             target_col=target_col,
-            features_to_drop=features_to_drop_no,
-        ),
-        train_params=TrainingParams(model_type="RandomForestClassifier"),
+            features_to_drop=features_to_drop_no),
+        inference_params=InferenceParams(source_data_path="", result_data_path="")
     )
 
     path_to_feature_transformer, path_to_model, path_to_metrics, metrics = train_pipeline(params)
