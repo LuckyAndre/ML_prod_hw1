@@ -89,7 +89,9 @@ class Features_transformer(object):
         df_cols = df.columns.to_list()
         df_cols.sort()
         if param_cols != df_cols:
-            raise NotImplementedError("DataFrame columns don't match with params")
+            raise NotImplementedError(f"DataFrame columns don't match with params",
+                                      f"Expected {param_cols}",
+                                      f"Got {df_cols}")
 
         # check matching of columns types with params
         df_cols_numeric = df.select_dtypes(
