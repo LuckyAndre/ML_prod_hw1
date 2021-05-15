@@ -17,7 +17,7 @@ def test_read_data(dataset_path: str, target_col: str, random_state: int, datase
     assert target_col in data.keys()
 
 
-def test_split_train_val_data(dataset_path: str, random_state: int, dataset_size: int):
+def test_split_train_val_data(random_state: int, dataset_size: int):
     # data generation
     data = synthetic_numeric_data_generator(random_state, dataset_size)
 

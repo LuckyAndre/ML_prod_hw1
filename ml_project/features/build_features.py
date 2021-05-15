@@ -133,7 +133,7 @@ def extract_target(df: pd.DataFrame, params: FeatureParams) -> pd.Series:
     return target
 
 
-def serialize_features_transformer(transformer: ColumnTransformer, output: str) -> str:
+def serialize_features_transformer(transformer: Features_transformer, output: str) -> str:
     with open(output, "wb") as f:
         pickle.dump(transformer, f)
     return output

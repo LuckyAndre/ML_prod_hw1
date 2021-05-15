@@ -1,4 +1,4 @@
-import os
+from py._path.local import LocalPath
 
 import pytest
 from typing import List, Optional
@@ -15,9 +15,8 @@ def dataset_size():
 
 
 @pytest.fixture()
-def dataset_path():
-    curdir = os.path.dirname(__file__)
-    return os.path.join(curdir, "train_data_sample.csv")
+def dataset_path(tmpdir: LocalPath):
+    return tmpdir.join("train.csv")
 
 
 @pytest.fixture()
