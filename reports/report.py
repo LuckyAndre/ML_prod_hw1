@@ -6,8 +6,8 @@ import pandas as pd
 from pandas_profiling import ProfileReport
 
 from ml_project.enities import (
-    TrainingPipelineParams,
-    read_training_pipeline_params
+    Params,
+    read_params
 )
 
 logger = logging.getLogger(__name__)
@@ -16,20 +16,20 @@ logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def make_report(params: TrainingPipelineParams):
+def make_report(params: Params):
     logger.info("EDA report preparation started")
-    source_df = pd.read_csv(params.input_data_path)
+    source_df = pd.read_csv(params.train_data_path)
 
     # report
     profile = ProfileReport(source_df)
-    profile.to_file(output_file=params.report_data_path)
+    profile.to_file(output_file=params.report_data)
     logger.info("EDA report preparation completed")
 
 
 @click.command(name="make_report")
 @click.argument("config_path")
 def make_report_command(config_path: str):
-    params = read_training_pipeline_params(config_path)
+    params = read_params(config_path)
     make_report(params)
 
 

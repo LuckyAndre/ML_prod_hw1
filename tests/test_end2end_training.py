@@ -5,7 +5,7 @@ from py._path.local import LocalPath
 
 from ml_project.train_pipeline import train_pipeline
 from ml_project.enities import (
-    TrainingPipelineParams,
+    Params,
     SplittingParams,
     FeatureParams,
     TrainingParams,
@@ -25,7 +25,7 @@ def test_train_e2e(
     expected_metric_path = tmpdir.join("metrics.json")
     expected_features_transformer_path = tmpdir.join("features_transformer.pkl")
 
-    params = TrainingPipelineParams(
+    params = Params(
         input_data_path=dataset_path,
         report_data_path="",
         output_model_path=expected_output_model_path,

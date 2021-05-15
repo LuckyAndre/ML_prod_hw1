@@ -8,8 +8,8 @@ from ml_project.data import (
     split_train_val_data
 )
 from ml_project.enities import (
-    TrainingPipelineParams,
-    read_training_pipeline_params
+    Params,
+    read_params
 )
 from ml_project.features import (
     extract_target,
@@ -32,10 +32,10 @@ logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
-def train_pipeline(training_pipeline_params: TrainingPipelineParams):
+def train_pipeline(training_pipeline_params: Params):
     # train, val data
     logger.info(f"start train pipeline with params {training_pipeline_params}")
-    data = read_data(training_pipeline_params.input_data_path)
+    data = read_data(training_pipeline_params.train_data_path)
     logger.info(f"data.shape is {data.shape}")
     train_df, val_df = split_train_val_data(data, training_pipeline_params.splitting_params)
     logger.info(f"train_df.shape is {train_df.shape}")
@@ -66,10 +66,10 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
     # save
     path_to_feature_transformer = serialize_features_transformer(
         transformer,
-        training_pipeline_params.output_features_transformer_path
+        training_pipeline_params.features_transformer_path
     )
-    path_to_model = serialize_model(model, training_pipeline_params.output_model_path)
-    path_to_metrics = serialize_metrics(metrics, training_pipeline_params.output_metric_path)
+    path_to_model = serialize_model(model, training_pipeline_params.model_path)
+    path_to_metrics = serialize_metrics(metrics, training_pipeline_params.metric_path)
     logger.info(f"transformer, model and metrics were saved")
 
     return path_to_feature_transformer, path_to_model, path_to_metrics, metrics
@@ -78,7 +78,7 @@ def train_pipeline(training_pipeline_params: TrainingPipelineParams):
 @click.command(name="train_pipeline")
 @click.argument("config_path")
 def train_pipeline_command(config_path: str):
-    params = read_training_pipeline_params(config_path)
+    params = read_params(config_path)
     train_pipeline(params)
 
 
